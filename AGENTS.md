@@ -214,9 +214,35 @@ vangnet-timer. Zo blijft de pagina leesbaar als JS niet laadt.
   h1 ≤ 72 px, h2 ≤ 48 px, kaarttekst 15 px, labels ≥ 12 px; sectiepadding op de
   4-punts schaal (`sm/md/lg` in `components/ui/section.tsx`). Kleine tekst niet
   lichter dan `text-paper/65` op donker en `text-muted` op papier.
-- **Fonts** self-hosted via `next/font/local` in `app/fonts/`; `fontClassName(locale)`
+- **Logo**: huis met schoorsteen en een PH-monogram, overgetekend van het
+  aangeleverde logo (`components/brand/logo.tsx`, viewBox 231 × 220 = de gemeten
+  pixels van het origineel, dus de maten in het bestand zijn de maten uit de
+  foto). Details die moeten blijven: het dak is een band van 18 dik waarvan de
+  bovenrand tot de punt doorloopt en de onderrand 20 eenheden eerder stopt (de
+  puntige einden: eerst een recht facet van 3,5, dan een zwakke helling naar de
+  onderrand), het zweeft boven de letters en steekt links en rechts 34 eenheden
+  uit, de schoorsteen staat recht boven de rechterstijl van de H en verdwijnt in
+  het dak, de P-rechterstijl is meteen de linkerstijl van de H en loopt bovenin
+  over in de schouder van de kom — er steekt geen blokje boven die schouder uit
+  — de H-rechterstijl loopt wel tot de kapitaalhoogte, de onderkant van de P-kom
+  en de dwarsbalk van de H zijn één doorlopende lijn net onder het midden, en
+  die balk begint bij de binnenkant van de P-stijl, niet bij de buitenkant. De
+  letters zijn gevulde vlakken, geen streken: de stijlen zijn 21,5 breed en de
+  horizontale balken 18, met de kapitaalhoogte op 91 en de basis op 218,5. De
+  kom van de P is een ruime bocht — buitenradius 35,5 die al op x = 91 begint en
+  tot de rechterkant op 126,5 loopt, binnenhoek 16,5; een krappere bocht maakt
+  de P te vierkant. Het origineel is een 3D-mockup: de dwarsbalk ligt daar ~4°
+  scheef en alle randen hebben bevelglans — hier is alles vlak en waterpas. Woordmerk staat in kapitalen
+  (`PERFECTE HUIS`, DM Sans 600, 12 px in de header); daaronder per taal de
+  tagline uit `lib/i18n/dict/common.ts` (`logoTagline`). Beeldmerk is messing
+  (`#b8924a` op donker, `#8a6b2f` op papier); het woordmerk volgt `tone`, dus
+  inkt op papier en papier op donker.
+- **Fonts** self-hosted via `next/font/local` in `app/fonts/`;   `fontClassName(locale)`
   kiest voor Arabisch een Arabische stack. In `app/globals.css` staan RTL-overrides
   (`letter-spacing: normal` voor Arabisch, spiegelende randen en iconen via `rtl:`).
+  Het logo-woordmerk is Latijns en houdt via `.font-brand` zijn eigen font én
+  tracking, ook op `/ar`; die selector is daarom uitgezonderd van de
+  `letter-spacing: normal`-regel.
 - **Foto's**: eigen opnames van het Google Maps-profiel, plus gegenereerd sfeerbeeld op
   de homehero en de twee diensten zonder eigen opname (zie hierboven). Geen stockbeeld,
   ook niet als plaatshouder, en geen gegenereerd beeld op een projectpagina.

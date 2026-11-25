@@ -272,7 +272,7 @@ const en: typeof nl = {
       question: "Questions about your own situation? Call",
       orAsk: "or request a survey.",
       quote: "Free quote",
-      related: "Read further",
+      related: "Read more",
       dutchOnly:
         "This article is written in Dutch, because it covers Dutch regulations and prices.",
     },
@@ -399,7 +399,7 @@ const ar: typeof nl = {
     },
     title: "شكرًا — وصل طلبك.",
     lead: "سنتواصل معك خلال يوم عمل واحد لتحديد موعد معاينة مجانية. هل لديك صور أو معلومات إضافية؟ يمكنك الرد على رسالة التأكيد.",
-    reference: "رقم مرجعك",
+    reference: "رقمك المرجعي",
     referenceNote: "اذكر هذا الرقم عند الاتصال أو المراسلة.",
     more: "نسيت شيئًا أو تريد التواصل أبكر؟",
     whatsappMessage: "مرحبًا Perfecthous، أرسلت للتو طلب عرض سعر.",

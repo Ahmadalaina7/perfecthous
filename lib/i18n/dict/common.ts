@@ -194,7 +194,7 @@ const en: typeof nl = {
   },
   footer: {
     intro:
-      "Builder and handyman company from Vlissingen. Renovation, finishing, plumbing and electrical work under one roof — from the first survey to a tidy handover.",
+      "Builder and handyman company from Vlissingen. Renovation, remodelling, finishing, plumbing and electrical work under one roof — from the first survey to a tidy handover.",
     services: "Services",
     company: "Company",
     legal: "Legal",
@@ -304,7 +304,7 @@ const ar: typeof nl = {
     quote: "عرض سعر مجاني",
     quoteShort: "عرض سعر",
     quoteLong: "اطلب عرض سعر مجاني",
-    quoteService: "عرض سعر لـ {service}",
+    quoteService: "عرض سعر: {service}",
     call: "اتصل الآن",
     callShort: "اتصال",
     callDirect: "اتصل مباشرة",
