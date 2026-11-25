@@ -90,7 +90,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           className="absolute inset-0 -z-10 bg-[linear-gradient(to_top,rgb(18_20_23/0.96)_0%,rgb(18_20_23/0.9)_38%,rgb(18_20_23/0.8)_70%,rgb(18_20_23/0.55)_100%)]"
         />
 
-        <Container className="relative pt-24 pb-12 md:pb-16">
+        <Container className="hero-enter relative pt-24 pb-12 md:pb-16">
           <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
             <p className="eyebrow text-brass-soft">{t.hero.eyebrow}</p>
             {/* Noemt het beeld én dat het sfeerbeeld is: zonder bijschrift leest de
@@ -371,7 +371,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   className="object-cover"
                 />
               </div>
-              <div className="absolute -right-4 -bottom-6 hidden max-w-[220px] bg-ink p-5 text-paper sm:block md:-right-8 rtl:-left-4 rtl:right-auto rtl:md:-left-8">
+              {/* Binnen het kader van de foto: een kaart die over de rand heen
+                  steekt breekt de rechter marge en veroorzaakt op tablet een
+                  paar pixel horizontale scroll. */}
+              <div className="absolute right-4 bottom-4 hidden max-w-[220px] bg-ink p-5 text-paper sm:block md:right-6 md:bottom-6 rtl:left-4 rtl:right-auto rtl:md:left-6">
                 <p className="font-display text-[1.6rem] leading-none">{t.about.cardTitle}</p>
                 <p className="mt-2 font-sans text-[0.8125rem] leading-snug text-paper/70">
                   {t.about.cardText}

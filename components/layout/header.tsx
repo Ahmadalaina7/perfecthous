@@ -80,7 +80,7 @@ function LanguageMenu({
       <summary
         ref={summaryRef}
         aria-label={t.languageSwitch}
-        className="flex min-h-9 cursor-pointer list-none items-center gap-1.5 rounded-[2px] px-2 font-sans text-[0.78rem] font-medium tracking-[0.04em] text-ink/70 uppercase transition-colors hover:text-ink [&::-webkit-details-marker]:hidden"
+        className="flex min-h-11 cursor-pointer list-none items-center gap-1.5 rounded-[2px] px-2 font-sans text-[0.78rem] font-medium tracking-[0.04em] text-ink/70 uppercase transition-colors hover:text-ink [&::-webkit-details-marker]:hidden"
       >
         {localeMeta[locale].short}
         <IconChevron
@@ -100,7 +100,7 @@ function LanguageMenu({
               lang={l}
               aria-current={l === locale ? "true" : undefined}
               className={cn(
-                "flex min-h-10 items-center px-3.5 font-sans text-[0.85rem] transition-colors hover:bg-paper-dim",
+                "flex min-h-11 items-center px-3.5 font-sans text-[0.85rem] transition-colors hover:bg-paper-dim",
                 l === locale ? "font-medium text-ink" : "text-ink/70",
               )}
             >
@@ -179,7 +179,11 @@ export function Header() {
             scrolled ? "h-16 md:h-[70px]" : "h-[72px] md:h-20",
           )}
         >
-          <Link href={localePath(locale)} aria-label={t.homeLink} className="shrink-0">
+          <Link
+            href={localePath(locale)}
+            aria-label={t.homeLink}
+            className="flex min-h-11 shrink-0 items-center"
+          >
             <Logo markSize={scrolled ? 34 : 38} showTagline={false} />
           </Link>
 

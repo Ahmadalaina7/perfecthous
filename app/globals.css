@@ -42,6 +42,15 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Entree van het eerste scherm: één keer bij het laden, in een korte trap.
+   Dit is een CSS-animatie en geen beginstand in de HTML: zonder JavaScript
+   (of met prefers-reduced-motion, zie @layer base) staat alles gewoon in zijn
+   eindtoestand. */
+@keyframes enter-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
@@ -119,7 +128,9 @@
     --font-sans: "Noto Naskh Arabic", "Geeza Pro", "Segoe UI", "Tahoma", sans-serif;
   }
 
-  :lang(ar) * { letter-spacing: normal !important; }
+  /* Het merkwoord is Latijns en houdt zijn eigen tracking; Arabische tekst
+     niet. Vandaar de uitzondering voor .font-brand. */
+  :lang(ar) *:not(.font-brand) { letter-spacing: normal !important; }
 
   :lang(ar) h1,
   :lang(ar) h2,
@@ -161,6 +172,27 @@
   }
 
   .eyebrow--plain::before { display: none; }
+
+  /* Merkwoord van het logo: altijd hetzelfde Latijnse font, ook op de
+     Arabische pagina's. Daar zet :lang(ar) --font-sans op de Arabische stack,
+     waardoor "PERFECTE HUIS" anders zou vallen dan op de Nederlandse site. */
+  .font-brand {
+    font-family: var(--font-dm-sans), "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .hero-enter > * {
+    animation: enter-rise 720ms var(--ease-out-quint) both;
+  }
+
+  .hero-enter > *:nth-child(1) { animation-delay: 40ms; }
+  .hero-enter > *:nth-child(2) { animation-delay: 110ms; }
+  .hero-enter > *:nth-child(3) { animation-delay: 180ms; }
+  .hero-enter > *:nth-child(4) { animation-delay: 240ms; }
+  .hero-enter > *:nth-child(5) { animation-delay: 300ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-enter > * { animation: none; }
+  }
 
   /* Onderstreepte link met messing "swash" bij hover */
   .link-underline {

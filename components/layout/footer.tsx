@@ -57,16 +57,24 @@ export function Footer({ locale }: { locale: Locale }) {
               {t.footer.intro}
             </p>
 
-            <address className="mt-8 space-y-3.5 text-[0.9375rem] not-italic">
-              <a href={telUrl} className="flex items-center gap-3 text-paper/85 transition-colors hover:text-brass-soft">
+            {/* Op een telefoon en tablet is elk contact een raakvlak van 44 px;
+                vanaf lg mag het compacter, want daar wijst een muis. */}
+            <address className="mt-6 space-y-1 text-[0.9375rem] not-italic md:mt-8 md:space-y-3.5">
+              <a
+                href={telUrl}
+                className="flex min-h-11 items-center gap-3 text-paper/85 transition-colors hover:text-brass-soft lg:min-h-0"
+              >
                 <IconPhone size={17} className="text-brass" />
                 <span dir="ltr">{site.phoneDisplay}</span>
               </a>
-              <a href={mailUrl} className="flex items-center gap-3 text-paper/85 transition-colors hover:text-brass-soft">
+              <a
+                href={mailUrl}
+                className="flex min-h-11 items-center gap-3 text-paper/85 transition-colors hover:text-brass-soft lg:min-h-0"
+              >
                 <IconMail size={17} className="text-brass" />
                 {site.email}
               </a>
-              <span className="flex items-start gap-3 text-paper/70">
+              <span className="flex items-start gap-3 py-2 text-paper/70 md:py-0">
                 <IconPin size={17} className="mt-0.5 shrink-0 text-brass" />
                 {addressLine}
               </span>
@@ -80,12 +88,12 @@ export function Footer({ locale }: { locale: Locale }) {
                 <h2 className="font-sans text-[0.68rem] font-semibold tracking-[0.18em] text-paper/45 uppercase">
                   {col.title}
                 </h2>
-                <ul className="mt-5 space-y-2.5">
+                <ul className="mt-3 space-y-0 lg:mt-5 lg:space-y-2.5">
                   {col.links.map((link) => (
                     <li key={link.href}>
                       <Link
                         href={localePath(locale, link.href)}
-                        className="inline-flex min-h-6 items-center text-[0.9rem] text-paper/70 transition-colors hover:text-paper"
+                        className="inline-flex min-h-11 items-center text-[0.9rem] text-paper/70 transition-colors hover:text-paper lg:min-h-0"
                       >
                         {link.label}
                       </Link>
