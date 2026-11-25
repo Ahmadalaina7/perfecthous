@@ -311,7 +311,14 @@ wijziging `/nl`, `/en` en `/ar` en of `/ar` echt `dir="rtl"` heeft.
 De app draait als Node.js-applicatie onder Phusion Passenger. Startbestand is
 `server.js` (geeft `PORT` ongewijzigd door: Plesk levert daar soms een socket-pad).
 Application root `perfecthous`, document root `perfecthous/public`, mode
-`production`. `NEXT_PUBLIC_*` wordt bij de build ingebakken, dus env eerst goed
+`production`.
+
+Draait de hosting op **LiteSpeed** (staat in de antwoordkop), dan kan Passenger de
+app niet starten. Daarom staat er een statische momentopname in `plesk-site/`
+(`npm run snapshot`) en een `.htaccess` in de repo-root die elke aanvraag
+daarheen stuurt. Een `git pull` is dan genoeg; de document root hoeft niet
+verzet en de broncode blijft buiten bereik. Formulieren en `/admin` werken in die
+versie niet. `NEXT_PUBLIC_*` wordt bij de build ingebakken, dus env eerst goed
 zetten, dan `npm ci && npx prisma db push && npm run db:seed && npm run build`.
 De volledige handleiding met checklist staat in `DEPLOY.md`.
 

@@ -1,0 +1,46 @@
+# Configuratie voor de statische momentopname. Wordt door
+# `npm run snapshot` opnieuw geschreven; pas het daar aan, niet hier.
+
+# Zonder de juiste types weigert de browser de JS-module en blijft de pagina
+# leeg, ook al staan alle bestanden er wel.
+AddType text/javascript .js
+AddType text/css .css
+AddType font/woff2 .woff2
+AddType font/woff .woff
+AddType image/svg+xml .svg
+AddType image/jpeg .jpg
+AddType image/jpeg .jpeg
+AddType image/png .png
+AddType image/webp .webp
+
+DirectoryIndex index.html
+
+# Bestaat een pad niet, dan naar de startpagina in plaats van een serverfout.
+ErrorDocument 404 /plesk-site/index.html
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  # Buildbestanden hebben een hash in de naam en mogen lang blijven staan.
+  ExpiresByType text/javascript "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/webp "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  # De HTML juist niet: na een nieuwe momentopname moet die meteen vers zijn.
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache, must-revalidate"
+  </FilesMatch>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  # De voorbeeldversie hoeft niet in Google te staan (robots.txt zegt het ook).
+  Header set X-Robots-Tag "noindex"
+</IfModule>

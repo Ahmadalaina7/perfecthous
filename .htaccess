@@ -1,0 +1,35 @@
+# De document root van dit (sub)domein is de repo zelf. De kant-en-klare site
+# staat in plesk-site/, dus elke aanvraag wordt daarnaartoe gestuurd. Daardoor
+# werkt de site meteen na een git pull: geen build, geen Node, en de document
+# root hoeft niet verzet te worden. Omdat niets buiten plesk-site/ geserveerd
+# wordt, is broncode als /server.js ook niet meer te downloaden.
+#
+# Werkt de hosting met nginx in plaats van Apache/LiteSpeed, dan leest deze
+# server dit bestand niet. Zet dan in Plesk het document root op
+# `…/perfecthous/plesk-site` (zie DEPLOY.md, sectie 0).
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Let's Encrypt leest zijn uitdaging uit de webroot; niet onderscheppen.
+  RewriteRule ^\.well-known/ - [L]
+
+  # Nooit doorsturen naar onszelf.
+  RewriteCond %{REQUEST_URI} !^/plesk-site/
+
+  # Startpagina.
+  RewriteRule ^$ /plesk-site/index.html [L]
+
+  # Bestaand bestand in de statische versie: precies dat bestand
+  # (/_next/static/…, /images/…, /snapshot-notice.js).
+  RewriteCond %{DOCUMENT_ROOT}/plesk-site%{REQUEST_URI} -f
+  RewriteRule ^(.*)$ /plesk-site/$1 [L]
+
+  # Bestaande map: de index.html daarin, dus /nl → /plesk-site/nl/index.html.
+  RewriteCond %{DOCUMENT_ROOT}/plesk-site%{REQUEST_URI} -d
+  RewriteRule ^(.*?)/?$ /plesk-site/$1/index.html [L]
+
+  # Al het andere bestaat niet. Naar de startpagina in plaats van de
+  # Plesk-standaardpagina of een mapoverzicht.
+  RewriteRule ^ /plesk-site/index.html [L]
+</IfModule>

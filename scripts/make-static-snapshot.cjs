@@ -212,14 +212,11 @@ async function main() {
   // Een voorbeeldversie hoort niet in Google; haal deze regel weg als dit de
   // echte site wordt.
   write(path.join(OUT, "robots.txt"), "User-agent: *\nDisallow: /\n");
-  write(
-    path.join(OUT, ".htaccess"),
-    `# Statische momentopname: nette 404 en geen indexering van mappen.
-Options -Indexes
-DirectoryIndex index.html
-ErrorDocument 404 /nl
-`,
-  );
+  // Deze regels horen bij de map: types (anders weigert de browser de JS),
+  // caching en een nette 404. De repo-root heeft zijn eigen .htaccess die
+  // hiernaartoe stuurt; die twee horen bij elkaar.
+  // Zelfde bestand als in de repo-root: types, caching en een nette 404.
+  fs.copyFileSync("deploy/plesk/plesk-site.htaccess", path.join(OUT, ".htaccess"));
 
   const bytes = (dir) => {
     let total = 0;

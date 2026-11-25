@@ -1,5 +1,10 @@
 # Live zetten op Plesk
 
+> **Staat er `Server: LiteSpeed` in de antwoordkop?** Dan kan de Node-app daar niet
+> starten (Passenger werkt alleen onder nginx/Apache) en hoef je niets van dit
+> blok te doen: een `git pull` is genoeg, want de `.htaccess` in de repo stuurt
+> alles naar `plesk-site/`. Zie sectie 0.
+>
 > **Je ziet de Plesk-standaardpagina ("This is a default webpage generated for … by Plesk")?**
 > Dan serveert nginx nog de standaard `index.html` uit de document root en niet de
 > Node-app. In volgorde:
@@ -31,14 +36,23 @@ Daarvoor staat er een kant-en-klare statische kopie in de repo: `plesk-site/`.
 Die map bevat 93 pagina's met alle CSS, JS en afbeeldingen, en heeft geen Node,
 npm of database nodig.
 
-**Eenmalig in Plesk:**
+**Je hoeft niets in te stellen.** De `.htaccess` in de hoofdmap van de repo
+stuurt elke aanvraag door naar `plesk-site/`. Een `git pull` is genoeg, ook als
+de document root van het (sub)domein de repo zelf is:
 
-1. Document root van het (sub)domein op `…/perfecthous/plesk-site` zetten.
-2. `index.html` weghalen uit de oude document root, anders blijft de Plesk-pagina
-   staan.
-3. Geen Node.js-app nodig; laat die uit staan of verwijder hem.
+- `/nl` → `plesk-site/nl/index.html`
+- `/_next/static/…` en `/images/…` → hetzelfde bestand in `plesk-site/`
+- al het andere → de startpagina, dus nooit meer de Plesk-standaardpagina
+- en omdat niets buiten `plesk-site/` geserveerd wordt, is `/server.js` niet
+  meer te downloaden
 
-Na een `git pull` staat een nieuwe versie er meteen.
+Geen Node.js-app nodig; laat die uit staan of verwijder hem. Zet je het document
+root wél op `…/perfecthous/plesk-site`, dan doet de hoofdmap-`.htaccess` niets en
+werkt het ook.
+
+Werkt de hosting met nginx in plaats van Apache/LiteSpeed, dan wordt een
+`.htaccess` niet gelezen; zet in dat geval het document root op
+`…/perfecthous/plesk-site`.
 
 **Wat deze versie niet kan** — en dat zegt de site ook eerlijk:
 
