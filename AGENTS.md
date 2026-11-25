@@ -277,8 +277,47 @@ canonical + `alternateLanguages` en een `PageHero` met `locale` toevoegen, en de
 in `app/sitemap.ts` zetten (die genereert de drie taalversies). Controleer na een
 wijziging `/nl`, `/en` en `/ar` en of `/ar` echt `dir="rtl"` heeft.
 
+## Beveiliging
+
+- **Headers** staan in `proxy.ts` (niet in `next.config`: `headers()` draait bij de
+  build, dus dan ligt de omgeving nog niet vast): `Content-Security-Policy`,
+  `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, en buiten de
+  preview `X-Frame-Options` + `frame-ancestors`. `Strict-Transport-Security` volgt
+  zodra het verzoek over https komt (`x-forwarded-proto`), dus achter de Plesk-proxy
+  komt hij automatisch mee. `/admin` en `/api` krijgen `X-Robots-Tag: noindex`.
+- **Geen nonce in de CSP.** Een nonce-CSP kan alleen met pagina's die per verzoek
+  renderen; dat kost de statische build op alle routes (gemeten: alles werd `ƒ`
+  in plaats van statisch). Daarom staat `script-src 'self' 'unsafe-inline'` aan en
+  zijn de andere richtingen dicht: alleen `challenges.cloudflare.com` (Turnstile)
+  en `maps.google.com`/`www.google.com` (kaart na toestemming) zijn extern
+  toegestaan. Voeg nooit een scriptbron toe zonder die hier te noemen.
+- **Inloggen**: bcrypt (kosten 12), generieke foutmelding, dummy-hash bij een
+  onbekend e-mailadres (gelijke responstijd) en rate limiting per gehasht IP
+  (10 pogingen per kwartaal van een kwartier). Elke beheeractie begint met
+  `requireAdmin()`.
+- **Secrets**: alleen via env, nooit in de repo. `.env` staat in `.gitignore`.
+  De repo is openbaar, dus het standaard-beheerderswachtwoord staat op straat:
+  `prisma/seed.ts` weigert in productie een account daarmee aan te maken.
+- **Uploads**: type- en groottecheck, UUID-bestandsnaam, geen SVG. `public/uploads`
+  is de enige schrijfbare map; zet die in de back-up.
+- **Dependencies**: Prisma blijft op 6.19.3 (7 vraagt een migratie, 8 RC is
+  onstabiel) — de vier resterende audit-meldingen zitten in de Prisma-CLI en
+  raken de runtime niet. `nodemailer` is verwijderd: mail gaat via Resend, en
+  `@auth/core` sleept die alleen mee voor de e-mailprovider die wij niet
+  gebruiken.
+
+## Live op Plesk
+
+De app draait als Node.js-applicatie onder Phusion Passenger. Startbestand is
+`server.js` (geeft `PORT` ongewijzigd door: Plesk levert daar soms een socket-pad).
+Application root `perfecthous`, document root `perfecthous/public`, mode
+`production`. `NEXT_PUBLIC_*` wordt bij de build ingebakken, dus env eerst goed
+zetten, dan `npm ci && npx prisma db push && npm run db:seed && npm run build`.
+De volledige handleiding met checklist staat in `DEPLOY.md`.
+
 ## Nog vóór livegang
 
 Placeholders (`[telefoonnummer]`, `[KvK-nummer]`, …) invullen via env, echte projecten en
 reviews plaatsen, juridische teksten laten controleren, openingstijden/spoedservice
-bevestigen, Resend-domein verifiëren en het standaardwachtwoord wijzigen.
+bevestigen, Resend-domein verifiëren en het standaardwachtwoord wijzigen. Zie
+`DEPLOY.md` voor de Plesk-stappen en de beveiligingschecklist.

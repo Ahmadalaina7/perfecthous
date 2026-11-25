@@ -11,6 +11,9 @@ import {
 
 const prisma = new PrismaClient();
 
+/** Alleen voor een lokale, verse database; nooit in productie. */
+const DEFAULT_ADMIN_PASSWORD = "WijzigDitWachtwoord123!";
+
 /**
  * Seed-data. Alle teksten zijn echte, bruikbare Nederlandse copy.
  * Projecten en reviews zijn voorbeelden: vervang ze door eigen werk voordat
@@ -21,7 +24,22 @@ async function main() {
 
   /* ---------- Beheerder ---------- */
   const email = process.env.ADMIN_EMAIL || "beheer@perfecthous.nl";
-  const password = process.env.ADMIN_PASSWORD || "WijzigDitWachtwoord123!";
+  const password = process.env.ADMIN_PASSWORD || DEFAULT_ADMIN_PASSWORD;
+  const existingAdmin = await prisma.adminUser.findUnique({ where: { email } });
+
+  // Het standaardwachtwoord staat in deze openbare repo. In productie weigeren
+  // we een account daarmee aan te maken; een bestaand account wordt nooit
+  // overschreven (update is leeg), dus dit raakt alleen een verse database.
+  if (!existingAdmin && process.env.NODE_ENV === "production" && password === DEFAULT_ADMIN_PASSWORD) {
+    throw new Error(
+      "Zet ADMIN_PASSWORD op een eigen wachtwoord voordat je in productie seedt: " +
+        "het standaardwachtwoord staat in de openbare repository.",
+    );
+  }
+  if (!existingAdmin && password === DEFAULT_ADMIN_PASSWORD) {
+    console.warn("  let op: standaardwachtwoord gebruikt — wijzig dit in het beheerpaneel.");
+  }
+
   await prisma.adminUser.upsert({
     where: { email },
     update: {},

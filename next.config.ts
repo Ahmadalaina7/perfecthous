@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Rustige dev-indicator; de preview-paneel-rand is al druk genoeg.
   devIndicators: false,
+  // Geen X-Powered-By: verklapt de stack en kost niets om weg te laten.
+  poweredByHeader: false,
+  // In productie nooit de bronkaart naar de client.
+  productionBrowserSourceMaps: false,
+  // React strict mode aan: dubbele effecten in dev vangen fouten vroeg.
+  reactStrictMode: true,
   images: {
     // Lokale bestanden worden door next/image geoptimaliseerd naar AVIF/WebP.
     formats: ["image/avif", "image/webp"],
