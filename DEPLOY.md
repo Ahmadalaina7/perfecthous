@@ -1,5 +1,22 @@
 # Live zetten op Plesk
 
+> **Je ziet de Plesk-standaardpagina ("This is a default webpage generated for … by Plesk")?**
+> Dan serveert nginx nog de standaard `index.html` uit de document root en niet de
+> Node-app. In volgorde:
+>
+> 1. **Document root** van het (sub)domein op de `public`-map van de app zetten, en de
+>    oude `index.html` in de oude document root verwijderen of hernoemen. Een bestaand
+>    `index.html` wint altijd van de proxy naar Node.
+> 2. **Node.js-app** aanmaken op precies dat (sub)domein: application root = de map met
+>    `server.js`, startup file = `server.js`, mode = production.
+> 3. **`git pull`** als de clone ouder is dan de commit met `server.js`.
+> 4. **Bouwen** op de server: `npm ci && npx prisma db push && npm run db:seed && npm run build`.
+> 5. **Env-variabelen** in Plesk zetten (sectie 3 hieronder) en *Restart App*.
+>
+> Twijfel je waar het misgaat? Draai in de application root:
+> `bash scripts/plesk-diag.sh` — dat noemt precies wat er ontbreekt.
+
+
 Deze site is een Next.js-app met een PostgreSQL-database. Op Plesk draait hij als
 Node.js-applicatie (Phusion Passenger), met `server.js` als startbestand. Alles
 wat hieronder staat is eenmalig; daarna is een update drie commando's.
@@ -134,7 +151,22 @@ npm run build
 
 Daarna **Restart App**. De omgevingvariabelen blijven staan.
 
-## 8. Beveiligingschecklist
+## 8. Als het niet werkt
+
+| Symptoom | Oorzaak | Oplossing |
+|---|---|---|
+| Plesk-standaardpagina | document root wijst naar de oude map, of daar staat nog een `index.html` | document root op `…/perfecthous/public`; oude `index.html` verwijderen |
+| 403 Forbidden | document root buiten de vhost, of geen rechten | document root binnen de vhost houden, rechten `755` op mappen |
+| 502 Bad Gateway | Node-app gestart maar gecrasht | Plesk → Node.js → logbestand; meestal `DATABASE_URL` of een ontbrekende build |
+| 500 bij het starten | `.next` ontbreekt of is van een andere Node-versie | `npm ci && npm run build` opnieuw, daarna *Restart App* |
+| Site laadt, maar zonder opmaak | `/_next/static` wordt niet door de app geserveerd | docroot moet `public` zijn en de app moet draaien; nginx mag `/_next` niet blokkeren |
+| verkeerd telefoonnummer of `[KvK-nummer]` in de HTML | `NEXT_PUBLIC_*` pas na de build gezet | env goed zetten en opnieuw `npm run build` |
+| inloggen lukt niet | `AUTH_URL` wijkt af van het echte adres, of `AUTH_SECRET` ontbreekt | `AUTH_URL=https://…` exact gelijk aan het domein; daarna herstarten |
+
+Draai `bash scripts/plesk-diag.sh` in de application root voor een controle van Node,
+bestanden, env, database en of de app antwoordt.
+
+## 9. Beveiligingschecklist
 
 - [ ] `AUTH_SECRET` is een nieuwe random waarde, niet die uit de voorbeeldbestanden.
 - [ ] `ADMIN_PASSWORD` is vervangen en het standaardwachtwoord uit de repo werkt niet.
