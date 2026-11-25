@@ -45,6 +45,17 @@ cd perfecthous
 
 Zonder git-toegang op de server: upload de ZIP van de repo en pak hem daar uit.
 
+**Gebruik je Plesk's Git-integratie?** Die kopieert alleen bestanden, hij bouwt
+niets. Zet onder *Additional deployment actions* één regel:
+
+```
+npm ci --include=dev && npm run build:plesk:code
+```
+
+Bij de allereerste deploy gebruik je daar `build:plesk` in plaats van
+`build:plesk:code`, zodat de database gevuld wordt. Zonder die regel staat er na
+een deploy een lege `.next` en start de app niet.
+
 ## 3. Node.js-app instellen
 
 Plesk → Websites & Domains → **Node.js**:
@@ -90,10 +101,22 @@ bouwt, anders staat er een oud telefoonnummer of `[KvK-nummer]` in de HTML.
 Via Plesk → Node.js → **Run script**, of met SSH in de application root:
 
 ```bash
-npm ci                 # installeert en draait prisma generate (postinstall)
-npx prisma db push     # maakt de tabellen aan
-npm run db:seed        # diensten, projecten, reviews, blog en de beheerder
-npm run build          # prisma generate + next build
+npm ci --include=dev   # dev-dependencies zijn nodig om te bouwen (prisma, tailwind, tsx)
+npm run build:plesk    # prisma generate → db push → seed → next build
+```
+
+`build:plesk` doet de vier stappen in de juiste volgorde: `prisma generate`,
+`npx prisma db push` (tabellen aanmaken), `npm run db:seed` en `next build`.
+Let op `--include=dev`: Plesk zet `NODE_ENV=production` en `npm ci` slaat dan
+juist de dev-dependencies over — dan ontbreken de Prisma-CLI en Tailwind en
+mislukt de build.
+
+**De seed hoort bij de eerste deploy.** Daarna overschrijft hij wat je in het
+beheerpaneel hebt aangepast en verwijdert hij projecten die niet in
+`prisma/seed-content.ts` staan. Voor elke volgende deploy gebruik je daarom:
+
+```bash
+npm run build:plesk:code   # zelfde stappen, maar zonder de seed
 ```
 
 De seed weigert in productie een beheerder met het standaardwachtwoord aan te
@@ -144,12 +167,13 @@ Loop daarna met de hand na:
 ```bash
 cd /var/www/vhosts/<domein>/perfecthous
 git pull
-npm ci                 # alleen als package.json of package-lock.json wijzigde
-npx prisma db push     # alleen als prisma/schema.prisma wijzigde
-npm run build
+npm ci --include=dev   # alleen als package.json of package-lock.json wijzigde
+npm run build:plesk:code
 ```
 
-Daarna **Restart App**. De omgevingvariabelen blijven staan.
+Daarna **Restart App**. De omgevingvariabelen blijven staan. `build:plesk:code`
+doet `prisma generate`, `db push` en `next build`, zonder de seed — die zou je
+inhoud uit het beheerpaneel overschrijven.
 
 ## 8. Als het niet werkt
 
