@@ -4,6 +4,13 @@
 # root hoeft niet verzet te worden. Omdat niets buiten plesk-site/ geserveerd
 # wordt, is broncode als /server.js ook niet meer te downloaden.
 #
+# Bewust geen `RewriteCond %{DOCUMENT_ROOT}/… -f`-test: op LiteSpeed/Plesk is
+# %{DOCUMENT_ROOT} niet betrouwbaar, en dan valt élke aanvraag terug op de
+# startpagina (site zonder CSS, JS en foto's).
+#
+# Paginapaden gaan rechtstreeks naar de index.html van die map. Zonder dat doet
+# de server er een 301 bij en staat `/plesk-site/nl/` in de adresbalk.
+#
 # Werkt de hosting met nginx in plaats van Apache/LiteSpeed, dan leest deze
 # server dit bestand niet. Zet dan in Plesk het document root op
 # `…/perfecthous/plesk-site` (zie DEPLOY.md, sectie 0).
@@ -14,22 +21,20 @@
   # Let's Encrypt leest zijn uitdaging uit de webroot; niet onderscheppen.
   RewriteRule ^\.well-known/ - [L]
 
-  # Nooit doorsturen naar onszelf.
+  # Nooit doorsturen naar onszelf (voorkomt een lus).
   RewriteCond %{REQUEST_URI} !^/plesk-site/
 
   # Startpagina.
-  RewriteRule ^$ /plesk-site/index.html [L]
+  RewriteRule ^$ plesk-site/index.html [L]
 
-  # Bestaand bestand in de statische versie: precies dat bestand
-  # (/_next/static/…, /images/…, /snapshot-notice.js).
-  RewriteCond %{DOCUMENT_ROOT}/plesk-site%{REQUEST_URI} -f
-  RewriteRule ^(.*)$ /plesk-site/$1 [L]
+  # Paginapad zonder bestandsextensie: de index.html van die map.
+  # /nl → plesk-site/nl/index.html, /nl/diensten/ → plesk-site/nl/diensten/index.html
+  RewriteCond %{REQUEST_URI} !^/plesk-site/
+  RewriteCond %{REQUEST_URI} !\.[a-zA-Z0-9]{2,5}$
+  RewriteRule ^(.*?)/?$ plesk-site/$1/index.html [L]
 
-  # Bestaande map: de index.html daarin, dus /nl → /plesk-site/nl/index.html.
-  RewriteCond %{DOCUMENT_ROOT}/plesk-site%{REQUEST_URI} -d
-  RewriteRule ^(.*?)/?$ /plesk-site/$1/index.html [L]
-
-  # Al het andere bestaat niet. Naar de startpagina in plaats van de
-  # Plesk-standaardpagina of een mapoverzicht.
-  RewriteRule ^ /plesk-site/index.html [L]
+  # Bestandspad (heeft een extensie): hetzelfde bestand in plesk-site/.
+  # Bestaat het daar niet, dan geeft de server de 404 uit plesk-site/.htaccess.
+  RewriteCond %{REQUEST_URI} !^/plesk-site/
+  RewriteRule ^(.*)$ plesk-site/$1 [L]
 </IfModule>

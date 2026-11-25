@@ -40,11 +40,18 @@ npm of database nodig.
 stuurt elke aanvraag door naar `plesk-site/`. Een `git pull` is genoeg, ook als
 de document root van het (sub)domein de repo zelf is:
 
-- `/nl` → `plesk-site/nl/index.html`
-- `/_next/static/…` en `/images/…` → hetzelfde bestand in `plesk-site/`
-- al het andere → de startpagina, dus nooit meer de Plesk-standaardpagina
+- paginapaden zonder extensie → de `index.html` van die map:
+  `/nl` → `plesk-site/nl/index.html`, `/nl/diensten` → `plesk-site/nl/diensten/index.html`
+- bestandspaden met extensie → hetzelfde bestand in `plesk-site/`
+  (`/_next/static/…`, `/images/…`, `/robots.txt`)
+- wat daar niet bestaat → de startpagina, dus nooit meer de Plesk-standaardpagina
 - en omdat niets buiten `plesk-site/` geserveerd wordt, is `/server.js` niet
   meer te downloaden
+
+De `.htaccess` gebruikt bewust géén `RewriteCond %{DOCUMENT_ROOT}/… -f`-test:
+op LiteSpeed/Plesk levert die niets op, en dan valt élke aanvraag terug op de
+startpagina (een kale pagina zonder CSS, JS en foto's). Dat is precies wat er
+bij de eerste poging misging.
 
 Geen Node.js-app nodig; laat die uit staan of verwijder hem. Zet je het document
 root wél op `…/perfecthous/plesk-site`, dan doet de hoofdmap-`.htaccess` niets en
