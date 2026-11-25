@@ -21,6 +21,45 @@ Deze site is een Next.js-app met een PostgreSQL-database. Op Plesk draait hij al
 Node.js-applicatie (Phusion Passenger), met `server.js` als startbestand. Alles
 wat hieronder staat is eenmalig; daarna is een update drie commando's.
 
+## 0. Draait je server op LiteSpeed? Gebruik de statische versie
+
+Staat er in de antwoordkop `Server: LiteSpeed`, dan kan de Node-app daar niet
+starten: Plesk start Node via Phusion Passenger, en dat werkt alleen onder
+nginx/Apache. Geen codefout, geen instelling die je zelf kunt omzetten.
+
+Daarvoor staat er een kant-en-klare statische kopie in de repo: `plesk-site/`.
+Die map bevat 93 pagina's met alle CSS, JS en afbeeldingen, en heeft geen Node,
+npm of database nodig.
+
+**Eenmalig in Plesk:**
+
+1. Document root van het (sub)domein op `…/perfecthous/plesk-site` zetten.
+2. `index.html` weghalen uit de oude document root, anders blijft de Plesk-pagina
+   staan.
+3. Geen Node.js-app nodig; laat die uit staan of verwijder hem.
+
+Na een `git pull` staat een nieuwe versie er meteen.
+
+**Wat deze versie niet kan** — en dat zegt de site ook eerlijk:
+
+- **formulieren versturen niets**; er is geen server. Bezoekers krijgen een
+  melding met het telefoonnummer en WhatsApp;
+- **`/admin` werkt niet**; beheer hoort bij de Node-versie;
+- **inhoud staat vast** op het moment van de momentopname.
+
+Daarom staat er een `robots.txt` met `Disallow: /` in, zodat de voorbeeldversie
+niet in Google komt. Wordt dit de echte site, haal die regel dan weg.
+
+**Opnieuw maken** na een inhoudswijziging (met de site draaiend op poort 3000):
+
+```bash
+npm run snapshot      # schrijft plesk-site/ opnieuw
+```
+
+Daarna committen en pushen; in Plesk is een `git pull` genoeg.
+Zet het document root pas op `plesk-site` als je die map ook echt wilt tonen:
+de rest van de repo hoort niet in de webroot (zie de waarschuwing in sectie 1).
+
 ## 1. Voorbereiden in Plesk
 
 1. **Node.js-extensie** installeren (Plesk → Extensions → Node.js).

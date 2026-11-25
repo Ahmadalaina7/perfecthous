@@ -1,0 +1,4 @@
+# Statische momentopname: nette 404 en geen indexering van mappen.
+Options -Indexes
+DirectoryIndex index.html
+ErrorDocument 404 /nl

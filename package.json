@@ -15,6 +15,7 @@
     "build:plesk:code": "prisma generate && prisma db push && next build",
     "start": "next start",
     "start:prod": "node server.js",
+    "snapshot": "node scripts/make-static-snapshot.cjs",
     "lint": "next lint",
     "db:push": "prisma db push",
     "db:seed": "node --env-file-if-exists=.env --import tsx prisma/seed.ts",
